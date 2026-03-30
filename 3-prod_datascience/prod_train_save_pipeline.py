@@ -17,6 +17,7 @@ from save_model import push_to_model_registry
 
 # name of the data connection that points to the s3 model storage bucket
 data_connection_secret_name = 's3-models'
+network_settings_secret = 'network-settings'
 
 
 # Create pipeline
@@ -35,6 +36,14 @@ def training_pipeline(hyperparameters: dict,
                       prod_flag: bool):
     # Fetch Data from GitHub
     fetch_task = fetch_data(version=version)
+    kubernetes.use_secret_as_env(
+        fetch_task,
+        secret_name=network_settings_secret,
+        secret_key_to_env={
+            "HTTP_PROXY": "HTTP_PROXY",
+            "HTTPS_PROXY": "HTTPS_PROXY",
+        },
+    )
 
     # Validate Data
     data_validation_task = validate_data(version=version, dataset=fetch_task.outputs["dataset"])
@@ -117,6 +126,14 @@ def training_pipeline(hyperparameters: dict,
             'AWS_SECRET_ACCESS_KEY': 'AWS_SECRET_ACCESS_KEY',
             'AWS_S3_BUCKET': 'AWS_S3_BUCKET',
             'AWS_DEFAULT_REGION': 'AWS_DEFAULT_REGION',
+        },
+    )
+    kubernetes.use_secret_as_env(
+        register_model_task,
+        secret_name=network_settings_secret,
+        secret_key_to_env={
+            "HTTP_PROXY": "HTTP_PROXY",
+            "HTTPS_PROXY": "HTTPS_PROXY",
         },
     )
 
