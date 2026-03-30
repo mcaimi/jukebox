@@ -15,3 +15,11 @@ The content is organized into the following directories:
 - **7-feature_store**: Configure Feast (Feature Store) and use it for real-time inference.  
 - **8-securing_ai**: Explore security tools for AI/ML workloads.  
 - **99-data_prep**: Prepares raw data before the lab. This is not used during the lab but can be utilized by the instructor to refresh the dataset beforehand.  
+
+## Kubernetes setup
+
+1. If you are using a proxy to connect to external dependencies (s3 buckets, huggingface, etc):
+
+```bash
+$ oc create secret generic network-settings --from-literal=HTTP_PROXY="proxy address" --from-literal=HTTPS_PROXY="proxy address"
+```
