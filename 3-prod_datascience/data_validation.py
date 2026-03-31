@@ -6,7 +6,7 @@ from kfp.dsl import (
 )
 
 
-@component()
+@component(base_image='python:3.11')
 def validate_data(
     version: str,
     dataset: Input[Dataset]
